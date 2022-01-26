@@ -1,3 +1,24 @@
+/*
+
+INSTRUCTIONS TO EXECUTE:
+
+Use POSTMAN for execution.
+
+POST Requests:
+1. /signup for new users {name, age,email ,password } as body
+2. /orders for placing new order {email, productName} as body
+
+GET Request
+1. /view-orders to view past orders. Pass :userId as url parameter and number of records as body
+
+PATCH Request
+1. /update to update user data. Pass :userId as url parameter and required data to change as body.
+
+DELETE Request
+1. /remove to delete orders. Pass :orderId as url parameter
+
+*/
+
 const express = require('express');
 const mongoose = require('mongoose');
 
