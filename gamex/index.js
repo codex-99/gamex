@@ -1,6 +1,6 @@
 /*
 
-INSTRUCTIONS TO EXECUTE:
+INSTRUCTIONS FOR EXECUTION:
 
 Use POSTMAN for execution.
 
@@ -21,6 +21,7 @@ DELETE Request
 
 const express = require('express');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 require('./db/conn');
 const Orders = require("./model/orderSchema")
@@ -56,7 +57,10 @@ app.post('/signup', async(req, res) => {
 
         const userSave = await user.save();
         if(userSave){
-            res.status(200).json({message: "User saved successfully"})
+            res.status(200).json({
+                message: "User saved successfully",
+                token: userSave.tokens[0]
+            })
             console.log(userSave)
         }
         
