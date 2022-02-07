@@ -1,0 +1,32 @@
+<app-navbar></app-navbar>
+<div class="container" *ngIf="!this.orders.length">
+    <div class="card">
+        <div class="card-body">
+            <div class="card-Id">
+                <h3>No Data Found!</h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container" *ngFor="let obj of this.orders">
+    <div class="card">
+        <div class="card-body">
+            <div class="card-Id">
+                <h3>Order ID: {{ obj.orderId }}</h3>
+            </div>
+            <div class="card-Id">
+                <p>Product ID: {{ obj.productId }}</p>
+            </div>
+            <div class="card-Id">
+                <p>User ID: {{ obj.userId }}</p>
+            </div>
+            <div class="card-productName">
+                <p>Product Name: {{obj.productName}}</p>
+            </div>
+            <div class="card-button" *ngIf="userAuthenticate">
+                <button class="btn btn-danger" (click)="delete(obj.orderId)" >Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<mat-paginator [length]="totalPost" [pageSize]="postsPerPage" (page)="onChangePage($event)"></mat-paginator>

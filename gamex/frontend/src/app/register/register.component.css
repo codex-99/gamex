@@ -1,0 +1,20 @@
+.head-container{
+    background-color: #222222;
+    height: 90px
+}
+.head-container h3{
+    color: #f6f6f6;
+    text-align: center;
+    margin: auto;
+    margin-top: 10px
+}
+.col-xs-5{
+    margin: 40px ;
+    padding: 25px;
+    border-right: 0.5px solid #444444;
+}
+.container{
+    margin-top: 100px;
+    border: 1px solid #444444;
+    border-radius: 20px
+}

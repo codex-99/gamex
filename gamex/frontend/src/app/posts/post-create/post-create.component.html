@@ -1,0 +1,22 @@
+<div class="container" *ngFor="let obj of this.products">
+    <div class="card" >
+        <div class="card-img">
+            <img [src]="obj.src" alt="">
+        </div>
+        <hr class="card-break">
+        <div class="card-body" >
+            <div class="card-title">
+                <h3>{{ obj.productName }}</h3>
+            </div>
+            <div class="card-buyer">
+                <p>{{ obj.productName }}</p>
+            </div>
+            <div class="card-price">
+                <p>{{obj.productPrice}}</p>
+            </div>
+            <div class="card-button" *ngIf="userAuthenticate">
+                <button class="btn btn-danger" (click)="shop(obj.productName)" >Shop Now</button>
+            </div>
+        </div>
+    </div>
+</div>

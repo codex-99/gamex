@@ -1,0 +1,16 @@
+
+#head {
+    margin: 20px 0;
+    font-weight: 400;
+    font-size: 24px;
+}
+
+.form-check{
+    margin: 10px 0;
+    
+}
+
+.form-check-label{
+    font-size: 16px;
+    margin-left: 10px;
+}

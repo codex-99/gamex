@@ -24,6 +24,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 require('./db/conn');
+const auth = require('./middleware/auth');
 const Orders = require("./model/orderSchema")
 const Products = require("./model/productSchema")
 const Users = require("./model/userSchema")
@@ -35,8 +36,19 @@ app.use(bodyParser.json());
 
 var max_order = 0;
 
+app.use((req,res,next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    res.setHeader("Access-Control-Allow-Methods",
+        "GET, POST, PATCH, DELETE, PUT, OPTIONS"
+    )
+    next()
+})
+
 // Create user data
-app.post('/signup', async(req, res) => {
+app.post('/signup', async(req, res, next) => {
     const {name,age,email,password} = req.body;
     if(!name || !age || !email || !password){
         return res.status(400).json({message: "Empty field"})
@@ -72,8 +84,9 @@ app.post('/signup', async(req, res) => {
 })
 
 //Place Order
-app.post('/order',async(req, res) => {
-    const {email, productName} = req.body
+app.post('/order',auth,async(req, res, next) => {
+    const {email, productName} = req.body;
+    console.log(`Email: ${email} and Product Name: ${productName}`)
     if(!email || !productName){
         res.status(400).json({message: "Empty Field"})
     }
@@ -89,7 +102,7 @@ app.post('/order',async(req, res) => {
         const orderId = `O${max_order+1}`;
         console.log(`OrderId: ${orderId}`)
         
-        const order = new Orders({orderId: orderId, userId: user.userId, productId: product.productId})
+        const order = new Orders({orderId: orderId, userId: user.userId, productId: product.productId, productName: productName})
         const orderSave = await order.save()
 
         if(orderSave){
@@ -105,15 +118,18 @@ app.post('/order',async(req, res) => {
 
 //Read user's order
 
-app.get('/view-orders/:userId',async(req,res)=>{
+app.get('/view-orders/:email',auth,async(req,res, next)=>{
     
-    var number_of_records = req.body.number_of_records
-    const userId = req.params.userId
-    if(!userId || !number_of_records){
+    var number_of_records = 10
+    // var number_of_records = req.body.number_of_records
+    const email = req.params.email
+    if(!email || !number_of_records){
         return res.json({message:"User details not found"})
     }
     try{
-        
+        const user = await Users.findOne({ email})
+        const userId = user.userId
+        const userData = {email: user.email, userId: user.userId}
         const order = await Orders.find({userId})
         if(!order){
             return res.send({message:"Data not found"})
@@ -130,17 +146,55 @@ app.get('/view-orders/:userId',async(req,res)=>{
             display.push(order[i])
         }
 
-        res.send({message: message,data: display})
+        res.send(display)
+        // res.send({message: message,orders: display})
 
 
     }catch(e){
+        console.log(e)
         res.json({message: "Error"})
     }
 })
 
+//Read products
+app.get('/products',async(req,res, next)=>{
+    try{
+        const product = await Products.find();
+        // console.log(product)
+        res.send(product)
+    }catch(e){
+        res.json({message: "Error"})
+        console.log(e)
+    }
+})
+
+//check Login
+app.post('/login',async(req, res, next)=>{
+    try{
+        const user = await Users.findOne({email: req.body.email});
+        if(!user){
+            return res.status(401).json({
+                message: "User Not Found"
+            })
+        }
+        const result = await bcrypt.compare(req.body.password, user.password);
+        // console.log(result)
+        if(!result){
+            return res.json({message: "Login Unsuccessful"})
+        }
+        const token = await user.generateAuthTokens();
+        res.json({
+            message: "User Login Successfully",
+            token: token,
+            userId: user.userId
+        })
+    }catch(e){
+        console.log(e)
+    }
+})
 
 //Update user data
-app.patch('/update/:id', async(req, res)=>{
+app.patch('/update/:id',auth, async(req, res, next)=>{
     try{
         const userId = req.params.id
         const user = await Users.findOne({userId})
@@ -156,7 +210,7 @@ app.patch('/update/:id', async(req, res)=>{
 })
 
 //Delete Orders
-app.delete('/remove/:id', async(req,res)=>{
+app.delete('/remove/:id', auth,async(req,res, next)=>{
     const orderId = req.params.id;
     try{
         const order = await Orders.deleteOne({orderId});

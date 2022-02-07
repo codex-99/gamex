@@ -1,0 +1,26 @@
+<app-navbar></app-navbar>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-5 ">
+            <form #postForm="ngForm" (submit)="checkFunc(postForm)">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        placeholder="Enter email"
+                        ngModel name="email">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Password</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1" 
+                    placeholder="Password"
+                    ngModel name="password">
+                </div>
+                <button type="submit" class="btn btn-primary"
+                >Log In</button><br>
+                <p class="newUser"><a [routerLink]="['/register']">Register Here!</a> for a new account</p>
+            </form>
+            
+        </div>
+    </div>
+</div>
